@@ -1,89 +1,418 @@
-<!doctype html>
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>나만의 중고마켓</title>
-    <link rel="stylesheet"
-        href="https://s3.ap-northeast-2.amazonaws.com/materials.spartacodingclub.kr/easygpt/default.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-        crossorigin="anonymous"></script>
-    <style>
-        .hero {
-            margin-bottom: 20px;
-        }
-
-        .card:hover {
-            transform: scale(1.1);
-            transition: transform .2s ease-out;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>METASCHOOL - 프리미엄 교육 콘텐츠 제작</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <div class="hero bg-dark text-center py-5">
-        <h1 class="text-white">나만의 르탄마켓</h1>
-        <h2 class="text-white">집에 있는 물건을 팝니다!</h2>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?rice-cooker" class="card-img-top" alt="전기밥솥">
-                    <div class="card-body">
-                        <h5 class="card-title">전기밥솥</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">5만원</h6>
-                        <p class="card-text">한 번 밖에 안쓴 전기밥솥 팝니다. 부모님이 독립 할 때 주신 거에요!</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>METASCHOOL</h1>
+                    <span class="tagline">Professional Education Content</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home">홈</a></li>
+                    <li><a href="#about">회사소개</a></li>
+                    <li><a href="#portfolio">포트폴리오</a></li>
+                    <li><a href="#services">서비스</a></li>
+                    <li><a href="#contact">문의하기</a></li>
+                </ul>
+                <button class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 히어로 섹션 -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1 class="hero-title">프리미엄 교육 콘텐츠로<br>미래를 설계합니다</h1>
+            <p class="hero-subtitle">방송대학·EBS 출신 전문 PD가 만드는 최고 품질의 교육 콘텐츠</p>
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary">프로젝트 문의</a>
+                <a href="#portfolio" class="btn btn-secondary">포트폴리오 보기</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 회사 소개 -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">METASCHOOL은 다릅니다</h2>
+                <p class="section-subtitle">전문성과 기술력으로 교육의 새로운 기준을 만듭니다</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎬</div>
+                    <h3>전문 제작진</h3>
+                    <p>방송대학과 EBS 출신 PD들의 풍부한 경험과 노하우로 최고 품질의 콘텐츠를 제작합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI 기반 콘텐츠</h3>
+                    <p>최신 AI 기술을 활용한 개인맞춤형 학습 콘텐츠로 학습 효과를 극대화합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏢</div>
+                    <h3>B2B 전문성</h3>
+                    <p>기업, 학교, 공공기관을 위한 맞춤형 교육 솔루션을 제공합니다</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 포트폴리오 -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">포트폴리오</h2>
+                <p class="section-subtitle">다양한 프로젝트로 검증된 전문성</p>
+            </div>
+            <div class="portfolio-grid">
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" alt="기업 교육">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">기업 교육</span>
+                        <h3>A사 임직원 리더십 교육</h3>
+                        <p>500명 대상 온라인 리더십 과정</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800" alt="AI 교육">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">AI 교육</span>
+                        <h3>AI 기초부터 활용까지</h3>
+                        <p>생성형 AI 실무 활용 교육</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800" alt="학교 교육">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">학교 교육</span>
+                        <h3>B대학교 온라인 강의</h3>
+                        <p>전공 기초 과목 콘텐츠 제작</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800" alt="자격증">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">자격증</span>
+                        <h3>IT 자격증 대비 과정</h3>
+                        <p>정보처리기사 온라인 강의</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800" alt="팀빌딩">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">조직문화</span>
+                        <h3>C기업 조직문화 개선</h3>
+                        <p>팀빌딩 워크숍 콘텐츠</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800" alt="디지털 전환">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">디지털 전환</span>
+                        <h3>공공기관 DX 교육</h3>
+                        <p>디지털 전환 역량 강화 과정</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800" alt="어학">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">어학</span>
+                        <h3>비즈니스 영어 과정</h3>
+                        <p>실무 영어 회화 강의 시리즈</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800" alt="재무">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">재무/회계</span>
+                        <h3>비전공자를 위한 회계</h3>
+                        <p>회계 기초 이해 과정</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800" alt="마케팅">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">마케팅</span>
+                        <h3>디지털 마케팅 실무</h3>
+                        <p>SNS 마케팅 전략 과정</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800" alt="협업">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">협업</span>
+                        <h3>애자일 방법론</h3>
+                        <p>효율적인 프로젝트 관리</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800" alt="코딩">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">코딩</span>
+                        <h3>파이썬 기초부터 실무</h3>
+                        <p>비개발자를 위한 코딩 교육</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800" alt="데이터">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">데이터 분석</span>
+                        <h3>데이터 기반 의사결정</h3>
+                        <p>엑셀/SQL 데이터 분석</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800" alt="리더십">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">리더십</span>
+                        <h3>신임 관리자 교육</h3>
+                        <p>관리자 필수 역량 과정</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800" alt="교육설계">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">교육 설계</span>
+                        <h3>교수 설계 역량 강화</h3>
+                        <p>효과적인 교육 콘텐츠 기획</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800" alt="창업">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">창업</span>
+                        <h3>스타트업 창업 실전</h3>
+                        <p>아이디어부터 투자유치까지</p>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=800" alt="기술교육">
+                    </div>
+                    <div class="portfolio-content">
+                        <span class="portfolio-category">기술 교육</span>
+                        <h3>클라우드 컴퓨팅 기초</h3>
+                        <p>AWS/Azure 입문 과정</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?chair" class="card-img-top" alt="의자">
-                    <div class="card-body">
-                        <h5 class="card-title">의자</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">1만원</h6>
-                        <p class="card-text">사무실에서 사용한 의자 팝니다. 조절 가능한 팔걸이가 달려있어요.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
+        </div>
+    </section>
+
+    <!-- 서비스 영역 -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">B2B 서비스</h2>
+                <p class="section-subtitle">기업과 기관을 위한 전문 교육 솔루션</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-number">01</div>
+                    <h3>기업 맞춤형 교육</h3>
+                    <ul>
+                        <li>임직원 역량 강화 프로그램</li>
+                        <li>신입사원 온보딩 교육</li>
+                        <li>리더십 개발 과정</li>
+                        <li>직무별 전문 교육</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-number">02</div>
+                    <h3>교육 콘텐츠 제작</h3>
+                    <ul>
+                        <li>온라인 강의 영상 제작</li>
+                        <li>인터랙티브 콘텐츠 개발</li>
+                        <li>AR/VR 교육 콘텐츠</li>
+                        <li>모바일 학습 앱</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-number">03</div>
+                    <h3>AI 학습 플랫폼</h3>
+                    <ul>
+                        <li>개인화 학습 추천 시스템</li>
+                        <li>학습 분석 대시보드</li>
+                        <li>AI 튜터링 서비스</li>
+                        <li>자동 평가 시스템</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-number">04</div>
+                    <h3>교육 컨설팅</h3>
+                    <ul>
+                        <li>교육 체계 수립</li>
+                        <li>학습 효과성 분석</li>
+                        <li>교육 운영 전략 수립</li>
+                        <li>LMS 구축 및 운영</li>
+                    </ul>
                 </div>
             </div>
-        
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?laptop" class="card-img-top" alt="노트북">
-                    <div class="card-body">
-                        <h5 class="card-title">노트북</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">30만원</h6>
-                        <p class="card-text">삼성 노트북 판매합니다. 사용기간은 1년 정도이며, 상태는 깨끗합니다.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
+        </div>
+    </section>
+
+    <!-- 통계 섹션 -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3 class="stat-number" data-target="500">0</h3>
+                    <p>완료 프로젝트</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="stat-number" data-target="200">0</h3>
+                    <p>파트너 기업</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="stat-number" data-target="50000">0</h3>
+                    <p>교육 수료자</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="stat-number" data-target="98">0</h3>
+                    <p>만족도 (%)</p>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="청소기.jpeg" class="card-img-top" alt="청소기">
-                    <div class="card-body">
-                        <h5 class="card-title">청소기</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">25만원</h6>
-                        <p class="card-text">청소기 실사용 1회, 최신형입니다.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
+        </div>
+    </section>
+
+    <!-- 문의 섹션 -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">프로젝트 문의</h2>
+                <p class="section-subtitle">최고의 교육 콘텐츠로 귀사의 성장을 지원하겠습니다</p>
             </div>
-            </div>
-
-
-            
-                        </div>
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <h3>METASCHOOL</h3>
+                    <div class="contact-item">
+                        <strong>주소</strong>
+                        <p>서울특별시 강남구 테헤란로 123</p>
                     </div>
+                    <div class="contact-item">
+                        <strong>이메일</strong>
+                        <p>contact@metaschool.kr</p>
+                    </div>
+                    <div class="contact-item">
+                        <strong>전화</strong>
+                        <p>02-1234-5678</p>
+                    </div>
+                    <div class="contact-item">
+                        <strong>운영시간</strong>
+                        <p>평일 09:00 - 18:00</p>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label>회사명/기관명</label>
+                        <input type="text" placeholder="회사명을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>담당자명</label>
+                        <input type="text" placeholder="이름을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>이메일</label>
+                        <input type="email" placeholder="example@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>연락처</label>
+                        <input type="tel" placeholder="010-1234-5678" required>
+                    </div>
+                    <div class="form-group">
+                        <label>문의내용</label>
+                        <textarea rows="5" placeholder="문의하실 내용을 입력하세요" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">문의하기</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
-            
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>METASCHOOL</h3>
+                    <p>전문성과 혁신으로 만드는<br>프리미엄 교육 콘텐츠</p>
+                </div>
+                <div class="footer-section">
+                    <h4>서비스</h4>
+                    <ul>
+                        <li><a href="#services">기업 교육</a></li>
+                        <li><a href="#services">콘텐츠 제작</a></li>
+                        <li><a href="#services">AI 플랫폼</a></li>
+                        <li><a href="#services">컨설팅</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>회사</h4>
+                    <ul>
+                        <li><a href="#about">회사소개</a></li>
+                        <li><a href="#portfolio">포트폴리오</a></li>
+                        <li><a href="#contact">문의하기</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>문의</h4>
+                    <p>contact@metaschool.kr</p>
+                    <p>02-1234-5678</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 METASCHOOL. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
+    <script src="script.js"></script>
 </body>
-
 </html>
