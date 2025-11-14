@@ -1,88 +1,588 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>나만의 중고마켓</title>
-    <link rel="stylesheet"
-        href="https://s3.ap-northeast-2.amazonaws.com/materials.spartacodingclub.kr/easygpt/default.css">
+    <title>메타스쿨 - 당신의 미래를 설계하는 온라인 학습 플랫폼</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"></script>
     <style>
-        .hero {
-            margin-bottom: 20px;
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
         }
 
-        .card:hover {
-            transform: scale(1.1);
-            transition: transform .2s ease-out;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            padding: 1rem 0;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            border: none;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .course-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            height: 100%;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .course-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .badge-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .stats-section {
+            background: var(--light-color);
+            padding: 60px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #64748b;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+        }
+
+        .footer-link {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="hero bg-dark text-center py-5">
-        <h1 class="text-white">나만의 르탄마켓</h1>
-        <h2 class="text-white">집에 있는 물건을 팝니다!</h2>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?rice-cooker" class="card-img-top" alt="전기밥솥">
-                    <div class="card-body">
-                        <h5 class="card-title">전기밥솥</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">5만원</h6>
-                        <p class="card-text">한 번 밖에 안쓴 전기밥솥 팝니다. 부모님이 독립 할 때 주신 거에요!</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
-                </div>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-mortarboard-fill"></i> 메타스쿨
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">특징</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#courses">강의</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">소개</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">문의</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-primary-custom btn-sm" href="#signup">무료 시작하기</a>
+                    </li>
+                </ul>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?chair" class="card-img-top" alt="의자">
-                    <div class="card-body">
-                        <h5 class="card-title">의자</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">1만원</h6>
-                        <p class="card-text">사무실에서 사용한 의자 팝니다. 조절 가능한 팔걸이가 달려있어요.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?laptop" class="card-img-top" alt="노트북">
-                    <div class="card-body">
-                        <h5 class="card-title">노트북</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">30만원</h6>
-                        <p class="card-text">삼성 노트북 판매합니다. 사용기간은 1년 정도이며, 상태는 깨끗합니다.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="청소기.jpeg" class="card-img-top" alt="청소기">
-                    <div class="card-body">
-                        <h5 class="card-title">청소기</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">25만원</h6>
-                        <p class="card-text">청소기 실사용 1회, 최신형입니다.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
-            </div>
-            </div>
+        </div>
+    </nav>
 
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">당신의 미래를<br>설계하는 시간</h1>
+                    <p class="hero-subtitle">메타스쿨과 함께 새로운 기술을 배우고, 커리어를 성장시키세요. 전문가가 만든 양질의 강의로 목표를 달성하세요.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#courses" class="btn btn-light btn-lg px-4">강의 둘러보기</a>
+                        <a href="#signup" class="btn btn-outline-light btn-lg px-4">무료 시작하기</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 mt-5 mt-lg-0">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop"
+                         alt="Learning" class="img-fluid rounded" style="box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                </div>
+            </div>
+        </div>
+    </section>
 
-            
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">수강생</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-item">
+                        <div class="stat-number">200+</div>
+                        <div class="stat-label">강의</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">만족도</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">학습 지원</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title">왜 메타스쿨인가요?</h2>
+            <p class="section-subtitle">최고의 학습 경험을 제공하는 이유</p>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-play-circle-fill"></i>
+                        </div>
+                        <h3 class="h4 mb-3">전문가 강의</h3>
+                        <p class="text-muted">실무 경험이 풍부한 전문가들이 직접 제작한 고품질 강의로 실전 스킬을 배워보세요.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-clock-fill"></i>
+                        </div>
+                        <h3 class="h4 mb-3">언제 어디서나</h3>
+                        <p class="text-muted">시간과 장소에 구애받지 않고 원하는 때에 학습할 수 있는 유연한 학습 환경을 제공합니다.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                        <h3 class="h4 mb-3">수료증 발급</h3>
+                        <p class="text-muted">강의를 완료하면 공인된 수료증을 받아 커리어 발전에 활용하실 수 있습니다.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <h3 class="h4 mb-3">커뮤니티</h3>
+                        <p class="text-muted">같은 목표를 가진 수강생들과 함께 학습하고 네트워킹할 수 있는 커뮤니티를 제공합니다.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-laptop-fill"></i>
+                        </div>
+                        <h3 class="h4 mb-3">실습 프로젝트</h3>
+                        <p class="text-muted">이론만이 아닌 실제 프로젝트를 통해 배운 내용을 바로 적용해볼 수 있습니다.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                        <h3 class="h4 mb-3">1:1 멘토링</h3>
+                        <p class="text-muted">학습 중 어려운 부분이 있다면 전문 멘토의 1:1 코칭을 받을 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses" class="bg-light">
+        <div class="container">
+            <h2 class="section-title">인기 강의</h2>
+            <p class="section-subtitle">지금 가장 많은 수강생이 선택한 강의</p>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card">
+                        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=250&fit=crop"
+                             class="course-img" alt="Web Development">
+                        <div class="card-body">
+                            <span class="badge badge-custom mb-2">개발</span>
+                            <h5 class="card-title">웹 개발 마스터 코스</h5>
+                            <p class="card-text text-muted">HTML, CSS, JavaScript부터 React까지 웹 개발의 모든 것을 배우는 완벽한 강의입니다.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="ms-1">4.9 (2,340)</span>
+                                </div>
+                                <span class="fw-bold" style="color: var(--primary-color);">₩99,000</span>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card">
+                        <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=250&fit=crop"
+                             class="course-img" alt="Data Science">
+                        <div class="card-body">
+                            <span class="badge badge-custom mb-2">데이터 과학</span>
+                            <h5 class="card-title">데이터 분석 전문가 과정</h5>
+                            <p class="card-text text-muted">Python과 데이터 분석 도구를 활용하여 데이터 전문가가 되어보세요.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="ms-1">4.8 (1,890)</span>
+                                </div>
+                                <span class="fw-bold" style="color: var(--primary-color);">₩129,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card">
+                        <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=400&h=250&fit=crop"
+                             class="course-img" alt="UI/UX Design">
+                        <div class="card-body">
+                            <span class="badge badge-custom mb-2">디자인</span>
+                            <h5 class="card-title">UI/UX 디자인 실전</h5>
+                            <p class="card-text text-muted">Figma를 활용한 실무 중심의 UI/UX 디자인 스킬을 익혀보세요.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="ms-1">4.9 (1,567)</span>
+                                </div>
+                                <span class="fw-bold" style="color: var(--primary-color);">₩89,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop"
+                             class="course-img" alt="AI">
+                        <div class="card-body">
+                            <span class="badge badge-custom mb-2">인공지능</span>
+                            <h5 class="card-title">AI 기초부터 활용까지</h5>
+                            <p class="card-text text-muted">ChatGPT, Midjourney 등 최신 AI 도구를 업무에 활용하는 방법을 배웁니다.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="ms-1">4.9 (3,210)</span>
+                                </div>
+                                <span class="fw-bold" style="color: var(--primary-color);">₩79,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop"
+                             class="course-img" alt="Marketing">
+                        <div class="card-body">
+                            <span class="badge badge-custom mb-2">마케팅</span>
+                            <h5 class="card-title">디지털 마케팅 완성</h5>
+                            <p class="card-text text-muted">SNS, 광고, SEO 등 디지털 마케팅의 모든 것을 실전 사례로 배웁니다.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="ms-1">4.7 (1,432)</span>
+                                </div>
+                                <span class="fw-bold" style="color: var(--primary-color);">₩69,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card">
+                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=250&fit=crop"
+                             class="course-img" alt="Blockchain">
+                        <div class="card-body">
+                            <span class="badge badge-custom mb-2">블록체인</span>
+                            <h5 class="card-title">블록체인 개발 입문</h5>
+                            <p class="card-text text-muted">스마트 컨트랙트 개발부터 NFT 생성까지 블록체인 기술을 배웁니다.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="ms-1">4.8 (987)</span>
+                                </div>
+                                <span class="fw-bold" style="color: var(--primary-color);">₩149,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5">
+                <a href="#" class="btn btn-primary-custom btn-lg">모든 강의 보기</a>
+            </div>
+        </div>
+    </section>
 
-            
+    <!-- CTA Section -->
+    <section class="cta-section" id="signup">
+        <div class="container">
+            <h2 class="display-4 fw-bold mb-4">지금 바로 시작하세요</h2>
+            <p class="lead mb-4">첫 달 무료! 언제든지 취소 가능합니다.</p>
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <form class="row g-3">
+                        <div class="col-md-8">
+                            <input type="email" class="form-control form-control-lg" placeholder="이메일 주소를 입력하세요">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-light btn-lg w-100">시작하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-mortarboard-fill"></i> 메타스쿨
+                    </h5>
+                    <p class="text-muted">당신의 미래를 설계하는 온라인 학습 플랫폼</p>
+                    <div class="mt-3">
+                        <a href="#" class="footer-link me-3"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#" class="footer-link me-3"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="#" class="footer-link me-3"><i class="bi bi-instagram fs-5"></i></a>
+                        <a href="#" class="footer-link"><i class="bi bi-youtube fs-5"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="mb-3">회사</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="footer-link">소개</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">채용</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">블로그</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">문의</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="mb-3">강의</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="footer-link">개발</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">디자인</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">마케팅</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">데이터</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="mb-3">지원</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="footer-link">도움말</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">FAQ</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">환불</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">제휴</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="mb-3">법적 고지</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="footer-link">이용약관</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">개인정보</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">쿠키정책</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: #475569;">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-muted mb-0">&copy; 2024 메타스쿨. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-muted mb-0">Made with <i class="bi bi-heart-fill text-danger"></i> in Korea</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 </body>
 
