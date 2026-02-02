@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, Image, X } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import { fileToBase64, isValidImageFile } from '../utils/imageUtils';
 import Spinner from './Spinner';
 
@@ -30,17 +30,19 @@ export default function ImageDropzone({
 
     const file = e.dataTransfer.files[0];
     if (file && isValidImageFile(file)) {
-      const base64 = await fileToBase64(file);
-      onImageSelect(base64, file);
+      const dataUrl = await fileToBase64(file);
+      onImageSelect(dataUrl, file);
     }
   };
 
   const handleFileSelect = async (e) => {
     const file = e.target.files?.[0];
     if (file && isValidImageFile(file)) {
-      const base64 = await fileToBase64(file);
-      onImageSelect(base64, file);
+      const dataUrl = await fileToBase64(file);
+      onImageSelect(dataUrl, file);
     }
+    // Reset input value so same file can be selected again
+    e.target.value = '';
   };
 
   const handleClick = () => {
@@ -51,7 +53,7 @@ export default function ImageDropzone({
     return (
       <div className="relative group">
         <img
-          src={`data:image/jpeg;base64,${preview}`}
+          src={preview}
           alt={label}
           className="w-full h-32 object-cover rounded-lg border-2 border-indigo-200"
         />

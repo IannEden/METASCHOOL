@@ -15,6 +15,7 @@ import {
 import { useApp } from '../context/AppContext';
 import ImageDropzone from './ImageDropzone';
 import Spinner from './Spinner';
+import { extractBase64Data, getMimeType } from '../utils/imageUtils';
 import {
   generateScript,
   analyzeStyleReference,
@@ -27,7 +28,11 @@ const RUNNING_TIME_OPTIONS = [
   { label: '1분', value: 60 },
   { label: '1분 30초', value: 90 },
   { label: '2분', value: 120 },
+  { label: '2분 30초', value: 150 },
   { label: '3분', value: 180 },
+  { label: '3분 30초', value: 210 },
+  { label: '4분', value: 240 },
+  { label: '4분 30초', value: 270 },
   { label: '5분', value: 300 },
 ];
 
@@ -48,7 +53,7 @@ export default function LeftPanel() {
     }));
   };
 
-  const handleStyleImageSelect = async (base64) => {
+  const handleStyleImageSelect = async (dataUrl) => {
     if (!state.apiKey) {
       setError('API 키를 먼저 입력해주세요.');
       return;
@@ -56,10 +61,12 @@ export default function LeftPanel() {
 
     dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingStyle', value: true } });
     try {
-      const analysis = await analyzeStyleReference(state.apiKey, base64);
+      const base64Data = extractBase64Data(dataUrl);
+      const mimeType = getMimeType(dataUrl);
+      const analysis = await analyzeStyleReference(state.apiKey, base64Data, mimeType);
       dispatch({
         type: 'SET_STYLE_REFERENCE',
-        payload: { image: base64, analysis }
+        payload: { image: dataUrl, analysis }
       });
       setError('');
     } catch (err) {
@@ -69,7 +76,7 @@ export default function LeftPanel() {
     }
   };
 
-  const handleCharacterImageSelect = async (base64) => {
+  const handleCharacterImageSelect = async (dataUrl) => {
     if (!state.apiKey) {
       setError('API 키를 먼저 입력해주세요.');
       return;
@@ -81,13 +88,15 @@ export default function LeftPanel() {
 
     dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingCharacter', value: true } });
     try {
-      const analysis = await analyzeCharacterReference(state.apiKey, base64, newCharacterName);
+      const base64Data = extractBase64Data(dataUrl);
+      const mimeType = getMimeType(dataUrl);
+      const analysis = await analyzeCharacterReference(state.apiKey, base64Data, mimeType, newCharacterName);
       dispatch({
         type: 'ADD_CHARACTER',
         payload: {
           id: Date.now(),
           name: newCharacterName,
-          image: base64,
+          image: dataUrl,
           analysis
         }
       });
@@ -362,7 +371,7 @@ export default function LeftPanel() {
                   {state.characters.map((char) => (
                     <div key={char.id} className="flex gap-2 p-2 bg-gray-50 rounded-lg">
                       <img
-                        src={`data:image/jpeg;base64,${char.image}`}
+                        src={char.image}
                         alt={char.name}
                         className="w-12 h-12 object-cover rounded"
                       />

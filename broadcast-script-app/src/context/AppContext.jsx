@@ -8,7 +8,7 @@ const initialState = {
 
   // Script Input
   topic: '',
-  runningTime: 60, // seconds (30-300)
+  runningTime: 240, // seconds (30-300), default 4분
   synopsis: '',
   notes: '',
 

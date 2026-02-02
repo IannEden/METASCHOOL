@@ -1,60 +1,32 @@
-const IMAGEN_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
+const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 export async function generateImage(apiKey, prompt, styleAnalysis = '') {
   // Combine prompt with style analysis
   const fullPrompt = styleAnalysis
-    ? `${prompt}. ${styleAnalysis}`
+    ? `${prompt}. Style: ${styleAnalysis}`
     : prompt;
 
-  // Using Gemini's image generation capability (Imagen 3)
-  const response = await fetch(`${IMAGEN_API_BASE}/imagen-3.0-generate-002:predict?key=${apiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      instances: [{ prompt: fullPrompt }],
-      parameters: {
-        sampleCount: 1,
-        aspectRatio: '16:9',
-        personGeneration: 'allow_adult',
-        safetySetting: 'block_only_high',
-      }
-    })
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    // Fallback to alternative API format if the first one fails
-    return await generateImageFallback(apiKey, fullPrompt);
-  }
-
-  const data = await response.json();
-
-  if (data.predictions && data.predictions[0]?.bytesBase64Encoded) {
-    return `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
-  }
-
-  throw new Error('Image generation failed');
-}
-
-async function generateImageFallback(apiKey, prompt) {
-  // Alternative: Use Gemini 2.0 Flash with image generation
-  const response = await fetch(`${IMAGEN_API_BASE}/gemini-2.0-flash-exp-image-generation:generateContent?key=${apiKey}`, {
+  // Use Gemini 2.0 Flash Experimental with image generation
+  const response = await fetch(`${GEMINI_API_BASE}/gemini-2.0-flash-exp-image-generation:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{
-        parts: [{ text: `Generate a cinematic 16:9 image: ${prompt}` }]
+        parts: [{
+          text: `Generate a high-quality cinematic image in 16:9 aspect ratio: ${fullPrompt}.
+Make it photorealistic with dramatic lighting and film-quality composition.`
+        }]
       }],
       generationConfig: {
-        responseModalities: ['image', 'text'],
-        imageSafetySetting: 'block_only_high'
+        responseModalities: ['image', 'text']
       }
     })
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error?.message || 'Image generation failed');
+    // Try fallback with Imagen 3
+    return await generateImageFallback(apiKey, fullPrompt);
   }
 
   const data = await response.json();
@@ -66,7 +38,38 @@ async function generateImageFallback(apiKey, prompt) {
     }
   }
 
-  throw new Error('No image in response');
+  // If no image in response, try fallback
+  return await generateImageFallback(apiKey, fullPrompt);
+}
+
+async function generateImageFallback(apiKey, prompt) {
+  // Fallback: Try Imagen 3 API
+  const response = await fetch(`${GEMINI_API_BASE}/imagen-3.0-generate-002:predict?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      instances: [{ prompt }],
+      parameters: {
+        sampleCount: 1,
+        aspectRatio: '16:9',
+        personGeneration: 'allow_adult',
+        safetySetting: 'block_only_high',
+      }
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error?.message || '이미지 생성에 실패했습니다. API 키와 할당량을 확인해주세요.');
+  }
+
+  const data = await response.json();
+
+  if (data.predictions && data.predictions[0]?.bytesBase64Encoded) {
+    return `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
+  }
+
+  throw new Error('이미지 생성에 실패했습니다.');
 }
 
 export function downloadImage(imageUrl, filename) {

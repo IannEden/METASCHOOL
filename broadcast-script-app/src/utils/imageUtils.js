@@ -2,13 +2,26 @@ export function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
-      // Remove data URL prefix
-      const base64 = reader.result.split(',')[1];
-      resolve(base64);
+      // Return full data URL (includes mime type)
+      resolve(reader.result);
     };
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+export function extractBase64Data(dataUrl) {
+  // Extract just the base64 part from data URL
+  if (dataUrl.includes(',')) {
+    return dataUrl.split(',')[1];
+  }
+  return dataUrl;
+}
+
+export function getMimeType(dataUrl) {
+  // Extract mime type from data URL
+  const match = dataUrl.match(/data:([^;]+);/);
+  return match ? match[1] : 'image/jpeg';
 }
 
 export function isValidImageFile(file) {

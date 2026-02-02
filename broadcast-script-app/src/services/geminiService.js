@@ -97,7 +97,7 @@ ${styleInstruction}
   return JSON.parse(jsonStr);
 }
 
-export async function analyzeStyleReference(apiKey, imageBase64) {
+export async function analyzeStyleReference(apiKey, imageBase64, mimeType = 'image/jpeg') {
   const prompt = `이 이미지의 시각적 스타일을 분석해주세요. 다음 요소들을 영어로 설명해주세요:
 1. Art style (e.g., photorealistic, painterly, anime, etc.)
 2. Color palette and tone
@@ -115,7 +115,7 @@ export async function analyzeStyleReference(apiKey, imageBase64) {
       contents: [{
         parts: [
           { text: prompt },
-          { inlineData: { mimeType: 'image/jpeg', data: imageBase64 } }
+          { inlineData: { mimeType, data: imageBase64 } }
         ]
       }],
       generationConfig: {
@@ -134,7 +134,7 @@ export async function analyzeStyleReference(apiKey, imageBase64) {
   return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
-export async function analyzeCharacterReference(apiKey, imageBase64, characterName) {
+export async function analyzeCharacterReference(apiKey, imageBase64, mimeType = 'image/jpeg', characterName) {
   const prompt = `이 인물 사진을 분석해주세요. "${characterName}"(이)라는 캐릭터로 사용됩니다.
 
 다음 요소들을 영어로 상세히 설명해주세요:
@@ -152,7 +152,7 @@ export async function analyzeCharacterReference(apiKey, imageBase64, characterNa
       contents: [{
         parts: [
           { text: prompt },
-          { inlineData: { mimeType: 'image/jpeg', data: imageBase64 } }
+          { inlineData: { mimeType, data: imageBase64 } }
         ]
       }],
       generationConfig: {
