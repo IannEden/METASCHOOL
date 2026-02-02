@@ -22,8 +22,10 @@ export async function generateScript(apiKey, { topic, runningTime, synopsis, not
     ? `\n\n모든 영상 프롬프트에 다음 스타일을 적용하세요: ${styleAnalysis}`
     : '';
 
-  const prompt = `당신은 전문 방송 대본 작가입니다. 다음 정보를 바탕으로 교육 콘텐츠 영상 대본을 작성하세요.
+  const prompt = `당신은 EBS 교육방송의 베테랑 수학사 다큐멘터리 작가입니다.
+중학생(13-15세)을 대상으로 하는 수학사 교육 콘텐츠 대본을 작성합니다.
 
+[프로젝트 정보]
 주제: ${topic}
 러닝타임: ${runningTime}초
 시놉시스: ${synopsis}
@@ -31,37 +33,59 @@ ${notes ? `참고사항: ${notes}` : ''}
 ${characterDescriptions}
 ${styleInstruction}
 
-요구사항:
-1. 총 ${targetCuts}개 내외의 컷으로 구성하세요 (최소 ${minCuts}컷, 최대 ${maxCuts}컷)
-2. 각 컷은 4~10초 분량으로 설계하세요
-3. 씬(Scene)과 컷(Cut)으로 논리적으로 구분하세요
-4. 각 컷에는 다음을 포함하세요:
-   - 샷 타입 (Wide Shot, Medium Shot, Close-up, Extreme Close-up, Over-the-shoulder, POV 등)
-   - 오디오 (나레이션 또는 대사)
-   - 영문 영상 프롬프트 (Midjourney/DALL-E 스타일, 고증에 충실하고 시네마틱하게)
-   - 한글 해석
+[핵심 작성 원칙]
 
-반드시 다음 JSON 형식으로만 응답하세요:
+1. **교육적 깊이**:
+   - 모든 나레이션에는 반드시 구체적인 역사적 사실, 수학적 개념, 연도, 수치가 포함되어야 합니다
+   - "피타고라스가 수학을 연구했다" (X) → "기원전 570년경 사모스 섬에서 태어난 피타고라스는, 이집트와 바빌로니아를 여행하며 수학을 배운 뒤, '만물은 수로 이루어져 있다'는 철학을 세웠습니다" (O)
+   - 단순 설명이 아닌, 배경/맥락/의의까지 설명하세요
+
+2. **나레이션 분량**:
+   - 각 컷의 나레이션은 최소 2-3문장, 50-80자 이상이어야 합니다
+   - 컷 하나에 하나의 완결된 정보나 이야기가 담겨야 합니다
+   - 짧은 감탄사나 단순 연결어만으로 구성된 컷은 금지입니다
+
+3. **스토리텔링**:
+   - 시청자의 호기심을 자극하는 질문으로 시작하세요
+   - 역사적 인물의 고민, 갈등, 발견의 순간을 생생하게 묘사하세요
+   - 수학적 발견이 당시 사회에 미친 영향을 설명하세요
+   - "그런데 여기서 놀라운 점은...", "하지만 문제가 있었습니다" 같은 전환을 활용하세요
+
+4. **수학사 팩트**:
+   - 정확한 연도, 장소, 인물명을 사용하세요
+   - 수학 공식이나 정리가 나오면 그 의미를 쉽게 풀어서 설명하세요
+   - 해당 발견이 현대에 어떻게 사용되는지 연결해주세요
+
+[기술적 요구사항]
+- 총 ${targetCuts}개 내외의 컷 (최소 ${minCuts}컷, 최대 ${maxCuts}컷)
+- 각 컷은 4~10초 분량
+- 씬(Scene)과 컷(Cut)으로 논리적 구분
+- 영상 프롬프트는 시네마틱하고 고증에 충실하게
+
+[JSON 출력 형식]
+반드시 아래 형식의 JSON만 출력하세요:
 {
   "title": "대본 제목",
   "totalDuration": ${runningTime},
   "scenes": [
     {
       "sceneNumber": 1,
-      "sceneTitle": "씬 제목",
+      "sceneTitle": "씬 제목 (예: 피타고라스의 탄생)",
       "cuts": [
         {
           "cutNumber": 1,
-          "duration": 5,
+          "duration": 6,
           "shotType": "Wide Shot",
-          "audio": "나레이션 또는 대사 내용",
-          "prompt": "Cinematic wide shot of..., 16:9 aspect ratio, film grain, dramatic lighting",
-          "promptKr": "한글 해석..."
+          "audio": "기원전 570년경, 에게해의 작은 섬 사모스. 이곳에서 서양 수학의 아버지라 불리는 한 인물이 태어났습니다. 바로 '피타고라스'입니다. 그는 훗날 수와 도형의 비밀을 밝혀내며, 수학의 역사를 완전히 바꾸어 놓게 됩니다.",
+          "prompt": "Cinematic wide shot of ancient Greek island of Samos, 6th century BC, Mediterranean sea, white stone buildings on hillside, sailing ships in harbor, morning golden light, photorealistic, 16:9, film grain",
+          "promptKr": "기원전 6세기 그리스 사모스 섬의 시네마틱 와이드샷, 지중해, 언덕 위 흰 돌건물들, 항구의 범선들, 아침 황금빛"
         }
       ]
     }
   ]
-}`;
+}
+
+위 예시처럼 나레이션에는 연도, 장소, 인물, 역사적 의의가 구체적으로 담겨야 합니다.`;
 
   const response = await fetch(`${GEMINI_API_BASE}/gemini-2.0-flash:generateContent?key=${apiKey}`, {
     method: 'POST',
