@@ -25,8 +25,16 @@ export function getMimeType(dataUrl) {
 }
 
 export function isValidImageFile(file) {
+  // Check by MIME type
   const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-  return validTypes.includes(file.type);
+  if (file.type && validTypes.includes(file.type)) {
+    return true;
+  }
+
+  // Fallback: check by file extension if MIME type is empty
+  const fileName = file.name?.toLowerCase() || '';
+  const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+  return validExtensions.some(ext => fileName.endsWith(ext));
 }
 
 export function formatFileSize(bytes) {
