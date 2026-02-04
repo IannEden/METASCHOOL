@@ -28,21 +28,40 @@ export default function ImageDropzone({
     e.preventDefault();
     setIsDragOver(false);
 
-    const file = e.dataTransfer.files[0];
-    if (file && isValidImageFile(file)) {
-      const dataUrl = await fileToBase64(file);
-      onImageSelect(dataUrl, file);
+    try {
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        if (!isValidImageFile(file)) {
+          alert('지원하지 않는 이미지 형식입니다. JPG, PNG, GIF, WEBP 파일만 가능합니다.');
+          return;
+        }
+        const dataUrl = await fileToBase64(file);
+        onImageSelect(dataUrl, file);
+      }
+    } catch (err) {
+      console.error('Image drop error:', err);
+      alert('이미지 처리 중 오류가 발생했습니다.');
     }
   };
 
   const handleFileSelect = async (e) => {
-    const file = e.target.files?.[0];
-    if (file && isValidImageFile(file)) {
-      const dataUrl = await fileToBase64(file);
-      onImageSelect(dataUrl, file);
+    try {
+      const file = e.target.files?.[0];
+      if (file) {
+        if (!isValidImageFile(file)) {
+          alert('지원하지 않는 이미지 형식입니다. JPG, PNG, GIF, WEBP 파일만 가능합니다.');
+          return;
+        }
+        const dataUrl = await fileToBase64(file);
+        onImageSelect(dataUrl, file);
+      }
+    } catch (err) {
+      console.error('Image select error:', err);
+      alert('이미지 처리 중 오류가 발생했습니다.');
+    } finally {
+      // Reset input value so same file can be selected again
+      if (e.target) e.target.value = '';
     }
-    // Reset input value so same file can be selected again
-    e.target.value = '';
   };
 
   const handleClick = () => {
