@@ -70,6 +70,24 @@ function appReducer(state, action) {
         characters: state.characters.filter(c => c.id !== action.payload)
       };
 
+    case 'UPDATE_CHARACTER_ANALYSIS': {
+      const { id, analysis } = action.payload;
+      return {
+        ...state,
+        characters: state.characters.map(c =>
+          c.id === id ? { ...c, analysis } : c
+        )
+      };
+    }
+
+    case 'UPDATE_STYLE_ANALYSIS':
+      return {
+        ...state,
+        styleReference: state.styleReference
+          ? { ...state.styleReference, analysis: action.payload }
+          : null
+      };
+
     case 'SET_AUTO_CAST_CHARACTERS':
       return { ...state, autoCastCharacters: action.payload };
 

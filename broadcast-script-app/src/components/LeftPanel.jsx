@@ -10,7 +10,8 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
-  Trash2
+  Trash2,
+  FlaskConical
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ImageDropzone from './ImageDropzone';
@@ -22,6 +23,7 @@ import {
   analyzeCharacterReference,
   autoCastCharacters
 } from '../services/geminiService';
+import { generateDemoScript } from '../utils/demoData';
 
 const RUNNING_TIME_OPTIONS = [
   { label: '30초', value: 30 },
@@ -45,6 +47,7 @@ export default function LeftPanel() {
   });
   const [newCharacterName, setNewCharacterName] = useState('');
   const [error, setError] = useState('');
+  const [testMode, setTestMode] = useState(false);
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -53,69 +56,104 @@ export default function LeftPanel() {
     }));
   };
 
+  // 스타일 이미지 선택 - API 없이도 업로드 가능
   const handleStyleImageSelect = async (dataUrl) => {
-    if (!state.apiKey) {
-      setError('API 키를 먼저 입력해주세요.');
-      return;
-    }
+    // 먼저 이미지 저장
+    dispatch({
+      type: 'SET_STYLE_REFERENCE',
+      payload: { image: dataUrl, analysis: '' }
+    });
+    setError('');
 
-    dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingStyle', value: true } });
-    try {
-      const base64Data = extractBase64Data(dataUrl);
-      const mimeType = getMimeType(dataUrl);
-      const analysis = await analyzeStyleReference(state.apiKey, base64Data, mimeType);
+    // API 키 있으면 분석 진행
+    if (state.apiKey && !testMode) {
+      dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingStyle', value: true } });
+      try {
+        const base64Data = extractBase64Data(dataUrl);
+        const mimeType = getMimeType(dataUrl);
+        const analysis = await analyzeStyleReference(state.apiKey, base64Data, mimeType);
+        dispatch({
+          type: 'SET_STYLE_REFERENCE',
+          payload: { image: dataUrl, analysis }
+        });
+      } catch (err) {
+        console.error('Style analysis error:', err);
+        // 분석 실패해도 이미지는 유지
+        setError('스타일 분석 실패 (이미지는 저장됨): ' + err.message);
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingStyle', value: false } });
+      }
+    } else if (testMode) {
+      // 테스트 모드: 더미 분석 결과
       dispatch({
         type: 'SET_STYLE_REFERENCE',
-        payload: { image: dataUrl, analysis }
+        payload: { image: dataUrl, analysis: '[테스트 모드] Style: Cinematic, warm golden lighting, photorealistic, film grain texture' }
       });
-      setError('');
-    } catch (err) {
-      setError('스타일 분석 실패: ' + err.message);
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingStyle', value: false } });
     }
   };
 
+  // 캐릭터 이미지 선택 - API 없이도 업로드 가능
   const handleCharacterImageSelect = async (dataUrl) => {
-    if (!state.apiKey) {
-      setError('API 키를 먼저 입력해주세요.');
-      return;
-    }
-    if (!newCharacterName.trim()) {
-      setError('캐릭터 이름을 먼저 입력해주세요.');
-      return;
-    }
+    const charName = newCharacterName.trim() || '캐릭터 ' + (state.characters.length + 1);
 
-    dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingCharacter', value: true } });
-    try {
-      const base64Data = extractBase64Data(dataUrl);
-      const mimeType = getMimeType(dataUrl);
-      const analysis = await analyzeCharacterReference(state.apiKey, base64Data, mimeType, newCharacterName);
+    // 먼저 캐릭터 저장
+    const newChar = {
+      id: Date.now(),
+      name: charName,
+      image: dataUrl,
+      analysis: ''
+    };
+
+    dispatch({ type: 'ADD_CHARACTER', payload: newChar });
+    setNewCharacterName('');
+    setError('');
+
+    // API 키 있으면 분석 진행
+    if (state.apiKey && !testMode) {
+      dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingCharacter', value: true } });
+      try {
+        const base64Data = extractBase64Data(dataUrl);
+        const mimeType = getMimeType(dataUrl);
+        const analysis = await analyzeCharacterReference(state.apiKey, base64Data, mimeType, charName);
+        dispatch({
+          type: 'UPDATE_CHARACTER_ANALYSIS',
+          payload: { id: newChar.id, analysis }
+        });
+      } catch (err) {
+        console.error('Character analysis error:', err);
+        setError('캐릭터 분석 실패 (이미지는 저장됨): ' + err.message);
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingCharacter', value: false } });
+      }
+    } else if (testMode) {
+      // 테스트 모드: 더미 분석 결과
       dispatch({
-        type: 'ADD_CHARACTER',
-        payload: {
-          id: Date.now(),
-          name: newCharacterName,
-          image: dataUrl,
-          analysis
-        }
+        type: 'UPDATE_CHARACTER_ANALYSIS',
+        payload: { id: newChar.id, analysis: `[테스트 모드] ${charName}: Middle-aged male, traditional clothing, dignified appearance` }
       });
-      setNewCharacterName('');
-      setError('');
-    } catch (err) {
-      setError('캐릭터 분석 실패: ' + err.message);
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: { key: 'isAnalyzingCharacter', value: false } });
     }
   };
 
   const handleAutoCast = async () => {
-    if (!state.apiKey) {
-      setError('API 키를 먼저 입력해주세요.');
-      return;
-    }
     if (!state.synopsis.trim()) {
       setError('시놉시스를 먼저 입력해주세요.');
+      return;
+    }
+
+    if (testMode) {
+      // 테스트 모드: 더미 캐스팅
+      dispatch({
+        type: 'SET_AUTO_CAST_CHARACTERS',
+        payload: [
+          { name: '피타고라스', description: '[테스트] Ancient Greek philosopher, white robes, long beard' },
+          { name: '유클리드', description: '[테스트] Elderly mathematician, scholarly appearance' }
+        ]
+      });
+      return;
+    }
+
+    if (!state.apiKey) {
+      setError('API 키를 입력하거나 테스트 모드를 사용해주세요.');
       return;
     }
 
@@ -132,16 +170,28 @@ export default function LeftPanel() {
   };
 
   const handleGenerateScript = async () => {
-    if (!state.apiKey) {
-      setError('API 키를 먼저 입력해주세요.');
-      return;
-    }
     if (!state.topic.trim()) {
       setError('주제를 입력해주세요.');
       return;
     }
     if (!state.synopsis.trim()) {
       setError('시놉시스를 입력해주세요.');
+      return;
+    }
+
+    if (testMode) {
+      // 테스트 모드: 더미 대본 생성
+      dispatch({ type: 'SET_LOADING', payload: { key: 'isGeneratingScript', value: true } });
+      setTimeout(() => {
+        const demoScript = generateDemoScript(state.topic, state.runningTime);
+        dispatch({ type: 'SET_SCRIPT', payload: demoScript });
+        dispatch({ type: 'SET_LOADING', payload: { key: 'isGeneratingScript', value: false } });
+      }, 1000);
+      return;
+    }
+
+    if (!state.apiKey) {
+      setError('API 키를 입력하거나 테스트 모드를 사용해주세요.');
       return;
     }
 
@@ -191,20 +241,37 @@ export default function LeftPanel() {
           </div>
         )}
 
-        {/* API Key */}
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-            <Key size={16} />
-            Google AI API Key
-          </label>
-          <input
-            type="password"
-            value={state.apiKey}
-            onChange={(e) => dispatch({ type: 'SET_API_KEY', payload: e.target.value })}
-            placeholder="API 키를 입력하세요"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-          />
+        {/* Test Mode Toggle */}
+        <div className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="flex items-center gap-2">
+            <FlaskConical size={16} className="text-amber-600" />
+            <span className="text-sm font-medium text-amber-700">테스트 모드</span>
+            <span className="text-xs text-amber-500">(API 미사용)</span>
+          </div>
+          <button
+            onClick={() => setTestMode(!testMode)}
+            className={`relative w-12 h-6 rounded-full transition-colors ${testMode ? 'bg-amber-500' : 'bg-gray-300'}`}
+          >
+            <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${testMode ? 'translate-x-7' : 'translate-x-1'}`} />
+          </button>
         </div>
+
+        {/* API Key - 테스트 모드면 숨김 */}
+        {!testMode && (
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Key size={16} />
+              Google AI API Key
+            </label>
+            <input
+              type="password"
+              value={state.apiKey}
+              onChange={(e) => dispatch({ type: 'SET_API_KEY', payload: e.target.value })}
+              placeholder="API 키를 입력하세요"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            />
+          </div>
+        )}
 
         {/* Basic Info Section */}
         <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -226,7 +293,7 @@ export default function LeftPanel() {
                   type="text"
                   value={state.topic}
                   onChange={(e) => dispatch({ type: 'SET_TOPIC', payload: e.target.value })}
-                  placeholder="예: 조선시대 세종대왕의 한글 창제"
+                  placeholder="예: 피타고라스 정리의 발견"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                 />
               </div>
@@ -354,7 +421,7 @@ export default function LeftPanel() {
                   type="text"
                   value={newCharacterName}
                   onChange={(e) => setNewCharacterName(e.target.value)}
-                  placeholder="캐릭터 이름"
+                  placeholder="캐릭터 이름 (선택사항)"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm mb-2"
                 />
                 <ImageDropzone
@@ -377,7 +444,7 @@ export default function LeftPanel() {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-700">{char.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{char.analysis}</p>
+                        <p className="text-xs text-gray-500 truncate">{char.analysis || '분석 대기중...'}</p>
                       </div>
                       <button
                         onClick={() => dispatch({ type: 'REMOVE_CHARACTER', payload: char.id })}
@@ -398,8 +465,8 @@ export default function LeftPanel() {
       <div className="p-4 border-t border-gray-200 bg-gray-50 space-y-2">
         <button
           onClick={handleGenerateScript}
-          disabled={state.isGeneratingScript || !state.apiKey || !state.topic || !state.synopsis}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          disabled={state.isGeneratingScript || !state.topic || !state.synopsis}
+          className={`w-full flex items-center justify-center gap-2 px-4 py-3 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed ${testMode ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-600 hover:bg-indigo-700'}`}
         >
           {state.isGeneratingScript ? (
             <>
@@ -409,7 +476,7 @@ export default function LeftPanel() {
           ) : (
             <>
               <Play size={20} />
-              대본 생성하기
+              {testMode ? '테스트 대본 생성' : '대본 생성하기'}
             </>
           )}
         </button>
