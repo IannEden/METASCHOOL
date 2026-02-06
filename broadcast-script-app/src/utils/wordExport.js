@@ -1,79 +1,15 @@
 export function exportToWord(script, generatedImages = {}) {
-  const tableRows = [];
-
-  // Add header row
-  tableRows.push(`
-    <tr style="background-color: #4F46E5; color: white;">
-      <th style="border: 1px solid #312E81; padding: 12px; text-align: center; width: 60px;">씬</th>
-      <th style="border: 1px solid #312E81; padding: 12px; text-align: center; width: 40px;">컷</th>
-      <th style="border: 1px solid #312E81; padding: 12px; text-align: center; width: 80px;">샷</th>
-      <th style="border: 1px solid #312E81; padding: 12px; text-align: center; width: 40px;">시간</th>
-      <th style="border: 1px solid #312E81; padding: 12px; text-align: center;">오디오 (나레이션)</th>
-      <th style="border: 1px solid #312E81; padding: 12px; text-align: center;">영상 프롬프트</th>
-    </tr>
-  `);
-
-  // Add data rows
-  script.scenes?.forEach(scene => {
-    scene.cuts?.forEach((cut, cutIndex) => {
-      const isFirstCut = cutIndex === 0;
-      const imageKey = `${scene.sceneNumber}-${cut.cutNumber}`;
-      const imageUrl = generatedImages[imageKey];
-
-      tableRows.push(`
-        <tr>
-          ${isFirstCut ? `
-            <td style="border: 1px solid #D1D5DB; padding: 12px; text-align: center; vertical-align: middle; background-color: #EEF2FF;" rowspan="${scene.cuts.length}">
-              <strong style="font-size: 14px;">씬 ${scene.sceneNumber}</strong><br/>
-              <span style="font-size: 11px; color: #6366F1;">${escapeHtml(scene.sceneTitle || '')}</span>
-            </td>
-          ` : ''}
-          <td style="border: 1px solid #D1D5DB; padding: 12px; text-align: center; vertical-align: middle; font-weight: bold;">${cut.cutNumber}</td>
-          <td style="border: 1px solid #D1D5DB; padding: 12px; text-align: center; vertical-align: middle; font-size: 11px;">${escapeHtml(cut.shotType)}</td>
-          <td style="border: 1px solid #D1D5DB; padding: 12px; text-align: center; vertical-align: middle;">${cut.duration || '-'}초</td>
-          <td style="border: 1px solid #D1D5DB; padding: 12px; vertical-align: top; line-height: 1.6;">
-            ${escapeHtml(cut.audio)}
-          </td>
-          <td style="border: 1px solid #D1D5DB; padding: 12px; vertical-align: top;">
-            <div style="font-size: 10px; color: #374151; line-height: 1.5; font-family: monospace; white-space: pre-wrap;">${escapeHtml(cut.prompt)}</div>
-            ${cut.promptKr ? `<div style="font-size: 10px; color: #6B7280; margin-top: 8px; padding-top: 8px; border-top: 1px solid #E5E7EB;">${escapeHtml(cut.promptKr)}</div>` : ''}
-          </td>
-        </tr>
-      `);
-    });
-  });
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <title>${escapeHtml(script.title || '방송대본')}</title>
-    </head>
-    <body style="font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; margin: 30px; font-size: 12px;">
-      <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #312E81; margin-bottom: 10px; font-size: 24px;">${escapeHtml(script.title || '방송대본')}</h1>
-        <p style="color: #6B7280; margin: 5px 0;">총 러닝타임: ${script.totalDuration || '-'}초 | 생성일: ${new Date().toLocaleDateString('ko-KR')}</p>
-      </div>
-      <table style="border-collapse: collapse; width: 100%;">
-        ${tableRows.join('')}
-      </table>
-    </body>
-    </html>
-  `;
-
-  downloadFile(html, `${script.title || '방송대본'}_${formatDate()}.doc`, 'application/msword');
+  const content = generateDocumentContent(script, generatedImages, 'word');
+  downloadFile(content, `${script.title || '방송대본'}_${formatDate()}.doc`, 'application/msword');
 }
 
 export function exportToPDF(script, generatedImages = {}) {
-  // Create a printable HTML and use browser's print to PDF
-  const printContent = generatePDFContent(script, generatedImages);
+  const printContent = generateDocumentContent(script, generatedImages, 'pdf');
 
-  const printWindow = window.open('', '_blank', 'width=800,height=600');
+  const printWindow = window.open('', '_blank', 'width=900,height=700');
   printWindow.document.write(printContent);
   printWindow.document.close();
 
-  // Wait for images to load then print
   printWindow.onload = () => {
     setTimeout(() => {
       printWindow.print();
@@ -81,42 +17,51 @@ export function exportToPDF(script, generatedImages = {}) {
   };
 }
 
-function generatePDFContent(script, generatedImages) {
-  let content = '';
+function generateDocumentContent(script, generatedImages, format) {
+  const totalCuts = script.scenes?.reduce((acc, scene) => acc + (scene.cuts?.length || 0), 0) || 0;
+
+  let scenesHtml = '';
 
   script.scenes?.forEach(scene => {
-    content += `
-      <div class="scene">
-        <div class="scene-header">씬 ${scene.sceneNumber}: ${escapeHtml(scene.sceneTitle || '')}</div>
-        <div class="cuts">
-    `;
+    let cutsHtml = '';
 
     scene.cuts?.forEach(cut => {
       const imageKey = `${scene.sceneNumber}-${cut.cutNumber}`;
       const imageUrl = generatedImages[imageKey];
 
-      content += `
+      cutsHtml += `
         <div class="cut">
           <div class="cut-header">
             <span class="cut-number">${cut.cutNumber}</span>
             <span class="shot-type">${escapeHtml(cut.shotType)}</span>
             <span class="duration">${cut.duration || '-'}초</span>
           </div>
-          <div class="cut-content">
+
+          <div class="cut-body">
             <div class="left-content">
-              <div class="audio-section">
-                <div class="section-title">나레이션</div>
-                <div class="audio-text">${escapeHtml(cut.audio)}</div>
+              <!-- 나레이션 -->
+              <div class="section audio-section">
+                <div class="section-label">나레이션 (${cut.duration}초)</div>
+                <div class="section-content">${escapeHtml(cut.audio)}</div>
               </div>
-              <div class="prompt-section">
-                <div class="section-title">영상 프롬프트</div>
-                <div class="prompt-text">${escapeHtml(cut.prompt)}</div>
+
+              <!-- 이미지 프롬프트 -->
+              <div class="section prompt-section">
+                <div class="section-label">이미지 프롬프트</div>
+                <div class="section-content mono">${escapeHtml(cut.prompt)}</div>
                 ${cut.promptKr ? `<div class="prompt-kr">${escapeHtml(cut.promptKr)}</div>` : ''}
               </div>
+
+              <!-- 동영상 프롬프트 -->
+              <div class="section video-section">
+                <div class="section-label">동영상 프롬프트</div>
+                <div class="section-content mono">${cut.videoPrompt ? escapeHtml(cut.videoPrompt) : '<span class="no-content">동영상 프롬프트 없음</span>'}</div>
+              </div>
             </div>
+
             ${imageUrl ? `
               <div class="right-content">
-                <img src="${imageUrl}" alt="씬 ${scene.sceneNumber} 컷 ${cut.cutNumber}" />
+                <img src="${imageUrl}" alt="씬 ${scene.sceneNumber} 컷 ${cut.cutNumber}" class="preview-image" />
               </div>
             ` : ''}
           </div>
@@ -124,7 +69,12 @@ function generatePDFContent(script, generatedImages) {
       `;
     });
 
-    content += '</div></div>';
+    scenesHtml += `
+      <div class="scene">
+        <div class="scene-header">씬 ${scene.sceneNumber}: ${escapeHtml(scene.sceneTitle || '')}</div>
+        <div class="scene-body">${cutsHtml}</div>
+      </div>
+    `;
   });
 
   return `
@@ -134,64 +84,90 @@ function generatePDFContent(script, generatedImages) {
       <meta charset="utf-8">
       <title>${escapeHtml(script.title || '방송대본')}</title>
       <style>
-        @page { size: A4; margin: 15mm; }
-        * { box-sizing: border-box; }
-        body {
-          font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+        @page {
+          size: A4;
+          margin: 20mm;
+        }
+
+        * {
+          box-sizing: border-box;
           margin: 0;
-          padding: 20px;
+          padding: 0;
+        }
+
+        body {
+          font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
           font-size: 11px;
-          line-height: 1.5;
+          line-height: 1.6;
           color: #333;
+          background: #fff;
+          padding: ${format === 'pdf' ? '20px' : '30px'};
         }
-        .header {
+
+        /* 문서 헤더 */
+        .document-header {
           text-align: center;
-          margin-bottom: 30px;
+          border-bottom: 4px solid #4F46E5;
           padding-bottom: 20px;
-          border-bottom: 3px solid #4F46E5;
+          margin-bottom: 30px;
         }
-        .header h1 {
-          color: #312E81;
+
+        .document-title {
           font-size: 24px;
-          margin: 0 0 10px 0;
+          font-weight: bold;
+          color: #1E1B4B;
+          margin-bottom: 10px;
         }
-        .header .meta {
+
+        .document-meta {
           color: #6B7280;
           font-size: 12px;
         }
+
+        /* 씬 */
         .scene {
           margin-bottom: 25px;
           page-break-inside: avoid;
         }
+
         .scene-header {
           background: linear-gradient(135deg, #4F46E5, #6366F1);
           color: white;
-          padding: 12px 16px;
-          font-weight: bold;
+          padding: 12px 20px;
           font-size: 14px;
+          font-weight: bold;
           border-radius: 8px 8px 0 0;
         }
-        .cuts {
+
+        .scene-body {
           border: 1px solid #E5E7EB;
           border-top: none;
           border-radius: 0 0 8px 8px;
         }
+
+        /* 컷 */
         .cut {
-          padding: 15px;
+          padding: 20px;
           border-bottom: 1px solid #E5E7EB;
+          page-break-inside: avoid;
         }
+
         .cut:last-child {
           border-bottom: none;
         }
+
         .cut-header {
           display: flex;
           align-items: center;
           gap: 12px;
-          margin-bottom: 12px;
+          margin-bottom: 15px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #F3F4F6;
         }
+
         .cut-number {
-          width: 28px;
-          height: 28px;
+          width: 32px;
+          height: 32px;
           background: #4F46E5;
           color: white;
           border-radius: 50%;
@@ -201,88 +177,165 @@ function generatePDFContent(script, generatedImages) {
           font-weight: bold;
           font-size: 12px;
         }
+
         .shot-type {
           background: #EEF2FF;
-          color: #4F46E5;
-          padding: 4px 10px;
+          color: #4338CA;
+          padding: 4px 12px;
           border-radius: 12px;
-          font-size: 10px;
+          font-size: 11px;
           font-weight: 500;
         }
+
         .duration {
           color: #9CA3AF;
           font-size: 11px;
         }
-        .cut-content {
+
+        .cut-body {
           display: flex;
-          gap: 15px;
+          gap: 20px;
         }
+
         .left-content {
           flex: 1;
         }
+
         .right-content {
           width: 200px;
           flex-shrink: 0;
         }
-        .right-content img {
+
+        .preview-image {
           width: 100%;
           border-radius: 8px;
           border: 1px solid #E5E7EB;
         }
-        .section-title {
+
+        /* 섹션 공통 */
+        .section {
+          margin-bottom: 12px;
+          border-radius: 8px;
+          padding: 12px;
+        }
+
+        .section-label {
           font-size: 10px;
           font-weight: bold;
-          color: #6B7280;
-          margin-bottom: 6px;
           text-transform: uppercase;
+          margin-bottom: 6px;
         }
-        .audio-section {
-          background: #EFF6FF;
-          padding: 12px;
-          border-radius: 8px;
-          margin-bottom: 10px;
-        }
-        .audio-text {
-          color: #1E40AF;
+
+        .section-content {
           font-size: 12px;
           line-height: 1.7;
         }
-        .prompt-section {
-          background: #F9FAFB;
-          padding: 12px;
-          border-radius: 8px;
-        }
-        .prompt-text {
-          font-family: monospace;
-          font-size: 9px;
-          color: #374151;
-          line-height: 1.5;
+
+        .section-content.mono {
+          font-family: 'Consolas', 'Monaco', monospace;
+          font-size: 10px;
+          background: white;
+          padding: 10px;
+          border-radius: 6px;
           word-break: break-word;
         }
+
+        /* 나레이션 섹션 */
+        .audio-section {
+          background: #EFF6FF;
+          border: 1px solid #BFDBFE;
+        }
+
+        .audio-section .section-label {
+          color: #1D4ED8;
+        }
+
+        .audio-section .section-content {
+          color: #1E40AF;
+        }
+
+        /* 이미지 프롬프트 섹션 */
+        .prompt-section {
+          background: #F9FAFB;
+          border: 1px solid #E5E7EB;
+        }
+
+        .prompt-section .section-label {
+          color: #374151;
+        }
+
+        .prompt-section .section-content {
+          color: #4B5563;
+          border: 1px solid #E5E7EB;
+        }
+
         .prompt-kr {
           margin-top: 8px;
           padding-top: 8px;
           border-top: 1px solid #E5E7EB;
-          font-size: 9px;
+          font-size: 10px;
           color: #6B7280;
         }
+
+        /* 동영상 프롬프트 섹션 */
+        .video-section {
+          background: #FAF5FF;
+          border: 1px solid #E9D5FF;
+        }
+
+        .video-section .section-label {
+          color: #7C3AED;
+        }
+
+        .video-section .section-content {
+          color: #5B21B6;
+          border: 1px solid #E9D5FF;
+        }
+
+        .no-content {
+          color: #A78BFA;
+          font-style: italic;
+        }
+
+        /* 문서 푸터 */
+        .document-footer {
+          text-align: center;
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 2px solid #E5E7EB;
+          color: #9CA3AF;
+          font-size: 10px;
+        }
+
         @media print {
-          body { padding: 0; }
-          .scene { page-break-inside: avoid; }
-          .cut { page-break-inside: avoid; }
+          body {
+            padding: 0;
+          }
+          .scene {
+            page-break-inside: avoid;
+          }
+          .cut {
+            page-break-inside: avoid;
+          }
         }
       </style>
     </head>
     <body>
-      <div class="header">
-        <h1>${escapeHtml(script.title || '방송대본')}</h1>
-        <div class="meta">
-          총 러닝타임: ${script.totalDuration || '-'}초 |
+      <div class="document-header">
+        <div class="document-title">${escapeHtml(script.title || '방송대본')}</div>
+        <div class="document-meta">
+          러닝타임: ${Math.floor(script.totalDuration / 60)}분 ${script.totalDuration % 60}초 |
           씬: ${script.scenes?.length || 0}개 |
+          컷: ${totalCuts}개 |
           생성일: ${new Date().toLocaleDateString('ko-KR')}
         </div>
       </div>
-      ${content}
+
+      ${scenesHtml}
+
+      <div class="document-footer">
+        AI 방송 대본 생성기 | 생성일: ${new Date().toLocaleDateString('ko-KR')} ${new Date().toLocaleTimeString('ko-KR')}
+      </div>
     </body>
     </html>
   `;

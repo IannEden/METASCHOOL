@@ -17,9 +17,18 @@ export async function generateScript(apiKey, { topic, runningTime, synopsis, not
       autoCastCharacters.map(c => `- ${c.name}: ${c.description}`).join('\n');
   }
 
-  // Build style instruction
+  // Build style instruction - VERY detailed for consistency
   const styleInstruction = styleAnalysis
-    ? `\n\n모든 영상 프롬프트에 다음 스타일을 적용하세요: ${styleAnalysis}`
+    ? `
+
+[스타일 레퍼런스 - 매우 중요!]
+다음 스타일을 모든 이미지/영상 프롬프트에 반드시 적용하세요. 톤, 색감, 질감, 조명을 일관되게 유지해야 합니다:
+${styleAnalysis}
+
+스타일 적용 원칙:
+- 모든 prompt와 videoPrompt의 마지막에 위 스타일 키워드를 포함시키세요
+- 색감(color palette)과 조명(lighting)을 일관되게 유지하세요
+- 질감(texture)과 분위기(mood)를 통일하세요`
     : '';
 
   const prompt = `당신은 EBS 교육방송의 베테랑 수학사 다큐멘터리 작가입니다.
@@ -62,7 +71,8 @@ ${styleInstruction}
 - 총 ${targetCuts}개 내외의 컷 (최소 ${minCuts}컷, 최대 ${maxCuts}컷)
 - 각 컷은 4~10초 분량
 - 씬(Scene)과 컷(Cut)으로 논리적 구분
-- 영상 프롬프트는 시네마틱하고 고증에 충실하게
+- 이미지 프롬프트(prompt): 정지 이미지용, 시네마틱하고 고증에 충실하게
+- 동영상 프롬프트(videoPrompt): [촬영기법] + [피사체] + [행동] + [배경] + [스타일과 분위기] 형식 엄수
 
 [JSON 출력 형식]
 반드시 아래 형식의 JSON만 출력하세요:
@@ -78,14 +88,23 @@ ${styleInstruction}
           "cutNumber": 1,
           "duration": 6,
           "shotType": "Wide Shot",
-          "audio": "기원전 570년경, 에게해의 작은 섬 사모스. 이곳에서 서양 수학의 아버지라 불리는 한 인물이 태어났습니다. 바로 '피타고라스'입니다. 그는 훗날 수와 도형의 비밀을 밝혀내며, 수학의 역사를 완전히 바꾸어 놓게 됩니다.",
+          "audio": "기원전 570년경, 에게해의 작은 섬 사모스...",
           "prompt": "Cinematic wide shot of ancient Greek island of Samos, 6th century BC, Mediterranean sea, white stone buildings on hillside, sailing ships in harbor, morning golden light, photorealistic, 16:9, film grain",
-          "promptKr": "기원전 6세기 그리스 사모스 섬의 시네마틱 와이드샷, 지중해, 언덕 위 흰 돌건물들, 항구의 범선들, 아침 황금빛"
+          "promptKr": "기원전 6세기 그리스 사모스 섬의 시네마틱 와이드샷...",
+          "videoPrompt": "[Wide aerial drone shot] [Ancient Greek island of Samos with white buildings] [Camera slowly descending toward the harbor, waves gently moving] [Mediterranean sea and mountains in background] [Golden hour, warm cinematic color grading, film grain, 4K]"
         }
       ]
     }
   ]
 }
+
+[동영상 프롬프트 작성 규칙]
+videoPrompt는 반드시 다음 5개 요소를 순서대로 포함:
+1. [촬영기법]: Wide shot, Close-up, Tracking shot, Dolly zoom, Crane shot, Slow motion 등
+2. [피사체]: 메인 피사체를 구체적으로 묘사
+3. [행동]: 카메라 또는 피사체의 움직임 (천천히 줌인, 걸어가는, 손을 들어올리는 등)
+4. [배경]: 배경 환경과 소품
+5. [스타일과 분위기]: 색감, 조명, 전체적 분위기${styleAnalysis ? ', 반드시 스타일 레퍼런스 반영' : ''}
 
 위 예시처럼 나레이션에는 연도, 장소, 인물, 역사적 의의가 구체적으로 담겨야 합니다.`;
 
