@@ -82,6 +82,25 @@ function appReducer(state, action) {
         }
       };
 
+    case 'REMOVE_GENERATED_IMAGE': {
+      const newImages = { ...state.generatedImages };
+      delete newImages[action.payload];
+      return { ...state, generatedImages: newImages };
+    }
+
+    case 'UPDATE_CUT_PROMPT': {
+      const { sceneIdx, cutIdx, prompt } = action.payload;
+      const newScript = { ...state.script };
+      newScript.scenes = [...newScript.scenes];
+      newScript.scenes[sceneIdx] = { ...newScript.scenes[sceneIdx] };
+      newScript.scenes[sceneIdx].cuts = [...newScript.scenes[sceneIdx].cuts];
+      newScript.scenes[sceneIdx].cuts[cutIdx] = {
+        ...newScript.scenes[sceneIdx].cuts[cutIdx],
+        prompt
+      };
+      return { ...state, script: newScript };
+    }
+
     case 'SET_LOADING':
       return { ...state, [action.payload.key]: action.payload.value };
 
